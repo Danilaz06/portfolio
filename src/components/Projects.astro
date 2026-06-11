@@ -1,0 +1,183 @@
+---
+import { profile } from '../data/profile';
+
+const statusLabel: Record<string, string> = {
+  production: 'en producción',
+  active: 'activo',
+  archived: 'archivado',
+};
+---
+
+<section id="projects" class="projects">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="section-kicker"><span class="section-index">04</span> / proyectos</span>
+      <h2 class="section-title">Cosas que he construido</h2>
+      <p class="section-sub">
+        Proyectos donde aplico lo que aprendo. El primero es mi TFG; el resto, práctica
+        deliberada para afianzar fundamentos.
+      </p>
+    </div>
+
+    <div class="proj-grid">
+      {
+        profile.projects.map((p, i) => (
+          <article
+            class:list={['proj', { 'proj--featured': i === 0 }]}
+            data-reveal
+            data-reveal-delay={String((i % 3) + 1)}
+          >
+            <div class="proj__top">
+              <div class="proj__icon mono">{'</>'}</div>
+              <div class="proj__status">
+                <span class="proj__status-dot" data-status={p.status} />
+                <span class="mono">{statusLabel[p.status ?? 'active']}</span>
+              </div>
+            </div>
+
+            <h3 class="proj__name">
+              {p.name}
+              {i === 0 && <span class="proj__badge mono">★ destacado</span>}
+            </h3>
+            <p class="proj__tagline">{p.tagline}</p>
+            <p class="proj__desc">{p.description}</p>
+
+            {p.metrics && (
+              <div class="proj__metrics">
+                {p.metrics.map((m) => (
+                  <div class="proj__metric">
+                    <span class="proj__metric-v mono">{m.value}</span>
+                    <span class="proj__metric-l">{m.label}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div class="proj__stack">
+              {p.stack.map((t) => <span class="chip">{t}</span>)}
+            </div>
+
+            <div class="proj__links">
+              {p.repo ? (
+                <a href={p.repo} target="_blank" rel="noopener noreferrer" class="proj__link mono">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
+                  code
+                </a>
+              ) : (
+                <span class="proj__link proj__link--soon mono">repo próximamente</span>
+              )}
+              {p.demo && (
+                <a href={p.demo} target="_blank" rel="noopener noreferrer" class="proj__link mono">
+                  demo
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7m0 0H8m9 0v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+              )}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .proj-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 1.3rem;
+  }
+  .proj {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-soft);
+    padding: 1.6rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  }
+  .proj::before {
+    content: '';
+    position: absolute; inset: 0 0 auto 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .proj:hover {
+    border-color: var(--accent-dim);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+  }
+  .proj:hover::before { opacity: 1; }
+
+  .proj--featured {
+    grid-column: span 2;
+    background:
+      radial-gradient(600px 220px at 90% -10%, var(--accent-glow), transparent 70%),
+      var(--bg-soft);
+    border-color: var(--accent-dim);
+  }
+  @media (max-width: 760px) { .proj--featured { grid-column: span 1; } }
+
+  .proj__top {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.2rem;
+  }
+  .proj__icon {
+    width: 42px; height: 42px;
+    display: grid; place-items: center;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    color: var(--accent);
+    font-size: 0.85rem;
+    background: var(--bg-elev);
+  }
+  .proj__status {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.72rem; color: var(--fg-muted);
+  }
+  .proj__status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 8px var(--accent);
+  }
+  .proj__status-dot[data-status='production'] { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  .proj__status-dot[data-status='active'] { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+  .proj__status-dot[data-status='archived'] { background: var(--fg-faint); box-shadow: none; }
+
+  .proj__name {
+    font-size: 1.3rem; font-weight: 700;
+    display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+  }
+  .proj__badge {
+    font-size: 0.68rem; color: var(--amber);
+    border: 1px solid color-mix(in srgb, var(--amber) 40%, transparent);
+    padding: 0.15rem 0.5rem; border-radius: 99px;
+    background: color-mix(in srgb, var(--amber) 10%, transparent);
+  }
+  .proj__tagline { color: var(--accent); font-size: 0.9rem; margin-top: 0.35rem; }
+  .proj__desc { color: var(--fg-muted); font-size: 0.95rem; margin-top: 0.8rem; flex-grow: 1; }
+
+  .proj__metrics {
+    display: flex; gap: 1.8rem;
+    margin: 1.2rem 0;
+    padding: 1rem 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .proj__metric { display: flex; flex-direction: column; gap: 0.2rem; }
+  .proj__metric-v { font-size: 1.15rem; font-weight: 700; color: var(--fg); }
+  .proj__metric-l { font-size: 0.74rem; color: var(--fg-muted); }
+
+  .proj__stack { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 1rem 0 1.3rem; }
+
+  .proj__links { display: flex; gap: 1.2rem; align-items: center; margin-top: auto; }
+  .proj__link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.84rem; color: var(--fg);
+    transition: color 0.2s;
+  }
+  .proj__link:hover { color: var(--accent); }
+  .proj__link--soon { color: var(--fg-faint); cursor: default; }
+</style>

@@ -1,0 +1,249 @@
+---
+// Visualización scroll-driven: el ciclo de vida de una petición HTTP.
+const stages = [
+  { tag: 'CLIENT', title: 'Cliente', step: 'El usuario lanza una petición HTTP desde el navegador o la app.' },
+  { tag: 'GATEWAY', title: 'API Gateway', step: 'Autentica el token, aplica rate-limiting y enruta al servicio correcto.' },
+  { tag: 'SERVICE', title: 'Servicio', step: 'El microservicio en Spring Boot ejecuta la lógica de negocio y valida los datos.' },
+  { tag: 'CACHE', title: 'Caché', step: 'Comprueba Redis: si el dato está cacheado, responde en microsegundos.' },
+  { tag: 'DB', title: 'PostgreSQL', step: 'Si no, consulta la base de datos, persiste los cambios y devuelve la respuesta.' },
+];
+
+const W = 1000;
+const Y = 120;
+const margin = 80;
+const span = (W - margin * 2) / (stages.length - 1);
+const anchors = stages.map((_, i) => margin + i * span);
+---
+
+<section id="pipeline" class="pipe">
+  <div class="pipe__sticky">
+    <div class="container pipe__inner">
+      <header class="pipe__head" data-reveal>
+        <span class="section-kicker"><span class="section-index">~</span> / cómo trabajo</span>
+        <h2 class="section-title">El viaje de una <span class="accent">petición</span></h2>
+        <p class="section-sub">Del clic del usuario a la base de datos. Haz scroll y míralo fluir.</p>
+      </header>
+
+      <div class="pipe__stage">
+        <svg class="pipe__svg" viewBox={`0 0 ${W} 240`} role="img" aria-label="Diagrama del ciclo de vida de una petición">
+          <defs>
+            <linearGradient id="pipeGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="var(--cyan)" />
+              <stop offset="100%" stop-color="var(--accent)" />
+            </linearGradient>
+            <filter id="pipeGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="6" result="b" />
+              <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+          </defs>
+
+          <!-- track de fondo -->
+          <path d={`M ${margin} ${Y} H ${W - margin}`} class="pipe__track" />
+          <!-- línea que se dibuja con el scroll -->
+          <path id="pipe-path" d={`M ${margin} ${Y} H ${W - margin}`} class="pipe__line" />
+
+          <!-- nodos -->
+          {
+            anchors.map((x, i) => (
+              <g class="pipe__node" data-node={String(i)} style={`--x:${x}px`}>
+                <circle cx={x} cy={Y} r="22" class="pipe__node-halo" />
+                <circle cx={x} cy={Y} r="9" class="pipe__node-dot" />
+                <text x={x} y={Y - 40} class="pipe__node-tag">{stages[i].tag}</text>
+                <text x={x} y={Y + 52} class="pipe__node-title">{stages[i].title}</text>
+              </g>
+            ))
+          }
+
+          <!-- paquete de datos viajando -->
+          <g id="pipe-packet" filter="url(#pipeGlow)">
+            <circle r="6" class="pipe__packet-core" />
+            <circle r="13" class="pipe__packet-ring" />
+          </g>
+        </svg>
+
+        <!-- panel de pasos -->
+        <ol class="pipe__steps">
+          {
+            stages.map((s, i) => (
+              <li class="pipe__step" data-step={String(i)}>
+                <span class="pipe__step-n mono">0{i + 1}</span>
+                <div>
+                  <span class="pipe__step-title mono">{s.title}</span>
+                  <span class="pipe__step-text">{s.step}</span>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pipe {
+    position: relative;
+    height: 360vh;            /* alto = pista de scroll */
+  }
+  .pipe__sticky {
+    position: sticky;
+    top: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+  .pipe__inner { width: 100%; }
+  .pipe__head { margin-bottom: clamp(1.5rem, 4vw, 3rem); }
+
+  .pipe__stage {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .pipe__svg { width: 100%; height: auto; overflow: visible; }
+
+  .pipe__track {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 2;
+  }
+  .pipe__line {
+    fill: none;
+    stroke: url(#pipeGrad);
+    stroke-width: 3;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 6px var(--accent-glow));
+  }
+
+  /* nodos */
+  .pipe__node-halo {
+    fill: var(--accent);
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(0.5);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .pipe__node-dot {
+    fill: var(--bg);
+    stroke: var(--line);
+    stroke-width: 2.5;
+    transition: stroke 0.35s, fill 0.35s;
+  }
+  .pipe__node-tag {
+    fill: var(--fg-faint);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-anchor: middle;
+    transition: fill 0.35s;
+  }
+  .pipe__node-title {
+    fill: var(--fg-muted);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 600;
+    text-anchor: middle;
+    transition: fill 0.35s;
+  }
+
+  /* nodo ya recorrido */
+  .pipe__node.done .pipe__node-dot { stroke: var(--accent-dim); fill: var(--accent-dim); }
+  .pipe__node.done .pipe__node-tag { fill: var(--fg-muted); }
+
+  /* nodo activo */
+  .pipe__node.active .pipe__node-halo { opacity: 0.18; transform: scale(1); }
+  .pipe__node.active .pipe__node-dot { stroke: var(--accent); fill: var(--accent); }
+  .pipe__node.active .pipe__node-tag { fill: var(--accent); }
+  .pipe__node.active .pipe__node-title { fill: var(--fg); }
+
+  /* paquete */
+  #pipe-packet { opacity: 0; transition: opacity 0.3s; }
+  #pipe-packet.live { opacity: 1; }
+  .pipe__packet-core { fill: #eafff4; }
+  .pipe__packet-ring { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0.6; }
+
+  /* pasos */
+  .pipe__steps {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.6rem;
+  }
+  .pipe__step {
+    display: flex;
+    gap: 0.7rem;
+    padding: 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--bg-soft);
+    opacity: 0.4;
+    transform: translateY(4px);
+    transition: opacity 0.4s, transform 0.4s, border-color 0.4s, background 0.4s;
+  }
+  .pipe__step.on {
+    opacity: 1;
+    transform: none;
+    border-color: var(--accent-dim);
+    background: var(--bg-elev);
+  }
+  .pipe__step-n { color: var(--accent); font-size: 0.8rem; flex-shrink: 0; }
+  .pipe__step-title { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .pipe__step-text { display: block; font-size: 0.82rem; color: var(--fg-muted); line-height: 1.5; }
+
+  @media (max-width: 700px) {
+    .pipe { height: 320vh; }
+    .pipe__node-tag { font-size: 17px; }
+    .pipe__node-title { font-size: 18px; }
+    .pipe__steps { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger } from '../scripts/smooth';
+
+  const section = document.getElementById('pipeline');
+  const path = document.getElementById('pipe-path') as SVGPathElement | null;
+  const packet = document.getElementById('pipe-packet');
+  const nodes = Array.from(document.querySelectorAll<SVGGElement>('.pipe__node'));
+  const steps = Array.from(document.querySelectorAll<HTMLElement>('.pipe__step'));
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (section && path && packet && nodes.length) {
+    const len = path.getTotalLength();
+    path.style.strokeDasharray = `${len}`;
+    path.style.strokeDashoffset = `${len}`;
+
+    const setActive = (idx: number) => {
+      nodes.forEach((n, i) => {
+        n.classList.toggle('active', i === idx);
+        n.classList.toggle('done', i < idx);
+      });
+      steps.forEach((s, i) => s.classList.toggle('on', i === idx));
+    };
+
+    // drive(p): pinta el estado del pipeline para un progreso p ∈ [0,1]
+    const drive = (p: number) => {
+      path.style.strokeDashoffset = `${len * (1 - p)}`;
+      const pt = path.getPointAtLength(len * p);
+      packet.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
+      packet.classList.toggle('live', p > 0.01 && p < 0.99);
+      setActive(Math.round(p * (nodes.length - 1)));
+    };
+
+    if (reduce) {
+      // Sin animación: dejamos el pipeline dibujado y el último paso activo.
+      path.style.strokeDashoffset = '0';
+      setActive(nodes.length - 1);
+    } else {
+      // ScrollTrigger reparte el progreso del scroll sobre toda la sección.
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: 'bottom bottom',
+        onUpdate: (self) => drive(self.progress),
+      });
+    }
+  }
+</script>

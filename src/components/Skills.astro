@@ -1,0 +1,101 @@
+---
+import { profile } from '../data/profile';
+---
+
+<section id="skills" class="skills">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="section-kicker"><span class="section-index">02</span> / stack técnico</span>
+      <h2 class="section-title">Herramientas con las que trabajo</h2>
+      <p class="section-sub">
+        Niveles autoevaluados con honestidad. Lo importante no es saberlo todo, sino
+        aprender rápido y aplicar bien lo que sé.
+      </p>
+    </div>
+
+    <div class="skills__grid">
+      {
+        profile.skills.map((group, gi) => (
+          <article class="skill-card" data-reveal data-reveal-delay={String((gi % 3) + 1)}>
+            <header class="skill-card__head">
+              <span class="skill-card__idx mono">0{gi + 1}</span>
+              <h3 class="skill-card__title">{group.category}</h3>
+            </header>
+            <ul class="skill-card__list">
+              {group.items.map((s) => (
+                <li class="skill">
+                  <div class="skill__top">
+                    <span class="skill__name">{s.name}</span>
+                    <span class="skill__pct mono">{s.level}</span>
+                  </div>
+                  <div class="skill__bar">
+                    <span class="skill__fill" data-level={String(s.level)} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .skills__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.2rem;
+  }
+  .skill-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-soft);
+    padding: 1.5rem;
+    transition: border-color 0.3s, transform 0.3s, background 0.3s;
+  }
+  .skill-card:hover {
+    border-color: var(--accent-dim);
+    transform: translateY(-3px);
+    background: var(--bg-elev);
+  }
+  .skill-card__head {
+    display: flex; align-items: center; gap: 0.7rem;
+    margin-bottom: 1.4rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .skill-card__idx {
+    color: var(--accent);
+    font-size: 0.78rem;
+    border: 1px solid var(--line);
+    padding: 0.15rem 0.4rem;
+    border-radius: 6px;
+  }
+  .skill-card__title { font-size: 1.02rem; font-weight: 600; }
+
+  .skill-card__list { list-style: none; display: grid; gap: 1.05rem; }
+  .skill__top {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 0.45rem;
+  }
+  .skill__name { font-size: 0.92rem; color: var(--fg); }
+  .skill__pct { font-size: 0.76rem; color: var(--fg-faint); }
+
+  .skill__bar {
+    height: 6px;
+    background: var(--bg-elev-2);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .skill__fill {
+    display: block;
+    height: 100%;
+    width: 0%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+    box-shadow: 0 0 12px var(--accent-glow);
+    transition: width 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .skill__fill.filled { width: var(--fill); }
+</style>

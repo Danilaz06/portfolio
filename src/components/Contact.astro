@@ -1,0 +1,137 @@
+---
+import { profile } from '../data/profile';
+const year = new Date().getFullYear();
+---
+
+<section id="contact" class="contact">
+  <div class="container">
+    <div class="contact__card" data-reveal>
+      <div class="contact__bar mono">
+        <span class="contact__bar-dots"><i></i><i></i><i></i></span>
+        <span>contact.sh</span>
+      </div>
+
+      <div class="contact__body">
+        <span class="section-kicker"><span class="section-index">05</span> / contacto</span>
+        <h2 class="contact__title">
+          ¿Hablamos? <span class="accent">Construyamos algo.</span>
+        </h2>
+        <p class="contact__sub">
+          Estoy abierto a oportunidades, proyectos y a aprender de gente que sabe más
+          que yo. Si tienes algo en mente, escríbeme.
+        </p>
+
+        <a href={`mailto:${profile.email}`} class="contact__mail mono">
+          <span class="contact__prompt accent">➜</span>
+          {profile.email}
+        </a>
+
+        <div class="contact__actions">
+          <a href={`mailto:${profile.email}`} class="btn btn--primary">
+            Enviar email
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 7l9 6 9-6M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          {
+            profile.socials
+              .filter((s) => s.label !== 'Email')
+              .map((s) => (
+                <a href={s.url} target="_blank" rel="noopener noreferrer" class="btn btn--ghost">
+                  {s.label}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7m0 0H8m9 0v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+              ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span class="mono footer__sig">
+        <span class="accent">{profile.initials}</span> · {profile.name}
+      </span>
+      <span class="mono footer__meta">
+        © {year} · diseñado y construido desde {profile.location.split(',')[0]}
+      </span>
+      <a href="#top" class="mono footer__top">volver arriba ↑</a>
+    </div>
+  </footer>
+</section>
+
+<style>
+  .contact { padding-bottom: 0; }
+  .contact__card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background:
+      radial-gradient(700px 300px at 50% -20%, var(--accent-glow), transparent 70%),
+      var(--bg-soft);
+    box-shadow: var(--shadow);
+  }
+  .contact__bar {
+    display: flex; align-items: center; gap: 0.8rem;
+    padding: 0.7rem 1rem;
+    background: var(--bg-elev);
+    border-bottom: 1px solid var(--line);
+    font-size: 0.76rem; color: var(--fg-faint);
+  }
+  .contact__bar-dots { display: flex; gap: 0.4rem; }
+  .contact__bar-dots i { width: 11px; height: 11px; border-radius: 50%; }
+  .contact__bar-dots i:nth-child(1) { background: #ff5f57; }
+  .contact__bar-dots i:nth-child(2) { background: #febc2e; }
+  .contact__bar-dots i:nth-child(3) { background: #28c840; }
+
+  .contact__body { padding: clamp(2.5rem, 6vw, 4.5rem); text-align: center; }
+  .contact__body .section-kicker { justify-content: center; }
+  .contact__title {
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-top: 0.5rem;
+  }
+  .contact__sub {
+    color: var(--fg-muted);
+    max-width: 48ch;
+    margin: 1.2rem auto 2rem;
+    font-size: 1.05rem;
+  }
+  .contact__mail {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    font-size: clamp(0.95rem, 2.5vw, 1.25rem);
+    padding: 0.8rem 1.4rem;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-sm);
+    color: var(--fg);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .contact__mail:hover { border-color: var(--accent); color: var(--accent); }
+  .contact__prompt { font-weight: 700; }
+
+  .contact__actions {
+    display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center;
+    margin-top: 2rem;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.8rem 1.4rem; font-size: 0.95rem; font-weight: 600;
+    border-radius: var(--radius-sm);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .btn--primary { background: var(--accent); color: #04130b; }
+  .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 14px 32px -12px var(--accent); }
+  .btn--ghost { border: 1px solid var(--line); color: var(--fg); background: var(--bg-elev); }
+  .btn--ghost:hover { border-color: var(--accent-dim); color: var(--accent); transform: translateY(-2px); }
+
+  /* ── Footer ──────────────────────────────────────────────────── */
+  .footer { margin-top: clamp(4rem, 9vw, 7rem); border-top: 1px solid var(--line); }
+  .footer__inner {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+    padding-block: 2rem;
+    font-size: 0.8rem; color: var(--fg-muted);
+  }
+  .footer__top { transition: color 0.2s; }
+  .footer__top:hover { color: var(--accent); }
+</style>

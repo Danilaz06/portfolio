@@ -1,0 +1,153 @@
+---
+import { profile } from '../data/profile';
+---
+
+<section id="about" class="about">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="section-kicker"><span class="section-index">01</span> / sobre mí</span>
+      <h2 class="section-title">No solo escribo código.<br />Construyo cosas que <span class="accent">funcionan</span>.</h2>
+    </div>
+
+    <div class="about__grid">
+      <div class="about__bio" data-reveal>
+        {profile.bio.map((p) => <p>{p}</p>)}
+
+        <div class="about__meta">
+          <div class="about__meta-item">
+            <span class="about__meta-k mono">// ubicación</span>
+            <span class="about__meta-v">{profile.location}</span>
+          </div>
+          <div class="about__meta-item">
+            <span class="about__meta-k mono">// idiomas</span>
+            <span class="about__meta-v">
+              {profile.languages.map((l) => `${l.name} (${l.level})`).join(' · ')}
+            </span>
+          </div>
+          {profile.education[0] && (
+            <div class="about__meta-item">
+              <span class="about__meta-k mono">// formación</span>
+              <span class="about__meta-v">{profile.education[0].title}</span>
+            </div>
+          )}
+        </div>
+
+        <div class="about__focus">
+          <span class="about__focus-title mono">$ hacia dónde voy</span>
+          <ul class="about__focus-list">
+            {profile.focus.map((f) => (
+              <li><span class="about__focus-arrow mono accent">→</span>{f}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tarjeta "objeto" estilo código -->
+      <aside class="about__card" data-reveal data-reveal-delay="2">
+        <div class="about__card-bar">
+          <span class="mono">Developer.java</span>
+          <span class="about__card-dot"></span>
+        </div>
+        <pre class="about__code mono"><code><span class="c-key">public class</span> <span class="c-cls">Developer</span> {'{'}
+  <span class="c-key">final String</span> name = <span class="c-str">"{profile.name}"</span>;
+  <span class="c-key">final String</span> role = <span class="c-str">"{profile.role}"</span>;
+  <span class="c-key">boolean</span> isLearning = <span class="c-bool">true</span>;
+  <span class="c-key">boolean</span> writesTests = <span class="c-bool">true</span>;
+
+  <span class="c-cmt">// café → commits → repeat</span>
+  <span class="c-key">void</span> <span class="c-fn">build</span>() {'{'}
+    <span class="c-key">while</span> (isLearning) {'{'}
+      ship(); improve();
+    {'}'}
+  {'}'}
+{'}'}</code></pre>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about__grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    align-items: start;
+  }
+  .about__bio p {
+    color: var(--fg-muted);
+    font-size: 1.08rem;
+    margin-bottom: 1.1rem;
+  }
+  .about__bio p:first-child { color: var(--fg); font-size: 1.18rem; }
+
+  .about__meta {
+    margin-top: 2rem;
+    display: grid;
+    gap: 1rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--line);
+  }
+  .about__meta-item { display: flex; flex-direction: column; gap: 0.25rem; }
+  .about__meta-k { font-size: 0.76rem; color: var(--fg-faint); }
+  .about__meta-v { color: var(--fg); font-size: 0.96rem; }
+
+  .about__focus {
+    margin-top: 2rem;
+    padding: 1.4rem 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: linear-gradient(180deg, var(--bg-elev), var(--bg-soft));
+  }
+  .about__focus-title {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+  }
+  .about__focus-list { list-style: none; display: grid; gap: 0.6rem; }
+  .about__focus-list li {
+    display: flex; gap: 0.6rem; align-items: baseline;
+    color: var(--fg); font-size: 0.96rem;
+  }
+  .about__focus-arrow { flex-shrink: 0; }
+
+  /* ── Tarjeta código ──────────────────────────────────────────── */
+  .about__card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: linear-gradient(180deg, #0c1018, #090c12);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 90px;
+  }
+  .about__card-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.7rem 1rem;
+    background: var(--bg-elev);
+    border-bottom: 1px solid var(--line);
+    font-size: 0.76rem;
+    color: var(--fg-faint);
+  }
+  .about__card-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 8px var(--accent);
+  }
+  .about__code {
+    padding: 1.4rem;
+    font-size: 0.85rem;
+    line-height: 1.85;
+    overflow-x: auto;
+  }
+  .c-key { color: var(--violet); }
+  .c-cls { color: var(--amber); }
+  .c-str { color: var(--accent); }
+  .c-bool { color: var(--cyan); }
+  .c-fn { color: var(--cyan); }
+  .c-cmt { color: var(--fg-faint); font-style: italic; }
+
+  @media (max-width: 900px) {
+    .about__grid { grid-template-columns: 1fr; }
+    .about__card { position: relative; top: 0; }
+  }
+</style>

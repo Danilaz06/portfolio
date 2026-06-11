@@ -1,0 +1,223 @@
+/* ════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM · dark / terminal
+   ════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Color · base ─────────────────────────────────────────────── */
+  --bg: #07090d;
+  --bg-soft: #0b0e14;
+  --bg-elev: #11151d;
+  --bg-elev-2: #161b25;
+  --line: #1d2430;
+  --line-soft: #161b24;
+
+  /* ── Color · texto ────────────────────────────────────────────── */
+  --fg: #e6edf3;
+  --fg-muted: #8b97a7;
+  --fg-faint: #5a6675;
+
+  /* ── Color · acento ───────────────────────────────────────────── */
+  --accent: #4ade80;        /* verde terminal */
+  --accent-dim: #2f9e5f;
+  --accent-glow: rgba(74, 222, 128, 0.16);
+  --cyan: #38bdf8;
+  --violet: #a78bfa;
+  --amber: #fbbf24;
+  --rose: #fb7185;
+
+  /* ── Tipografía ───────────────────────────────────────────────── */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', ui-monospace, monospace;
+
+  /* ── Espaciado / forma ────────────────────────────────────────── */
+  --radius: 14px;
+  --radius-sm: 8px;
+  --maxw: 1120px;
+  --gutter: clamp(1.2rem, 4vw, 2.5rem);
+
+  /* ── Sombra ───────────────────────────────────────────────────── */
+  --shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 0 1px var(--line), 0 12px 40px -12px var(--accent-glow);
+}
+
+/* ── Reset ──────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scrollbar-color: var(--line) transparent;
+}
+
+/* Lenis (smooth scroll). Cuando NO está activo, usamos scroll suave nativo. */
+html:not(.lenis) { scroll-behavior: smooth; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Fondo: grid sutil + halo radial */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(1100px 600px at 78% -8%, rgba(74, 222, 128, 0.07), transparent 60%),
+    radial-gradient(900px 500px at 8% 12%, rgba(56, 189, 248, 0.05), transparent 55%);
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(var(--line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 100% 70% at 50% 0%, #000 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 100% 70% at 50% 0%, #000 30%, transparent 80%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+::selection { background: var(--accent); color: #04130b; }
+
+/* ── Scrollbar ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 99px;
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover { background: #2a3340; }
+
+/* ════════════════════════════════════════════════════════════════
+   LAYOUT
+   ════════════════════════════════════════════════════════════════ */
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+section { position: relative; padding-block: clamp(4.5rem, 10vw, 8rem); }
+
+/* ── Encabezado de sección ──────────────────────────────────────── */
+.section-head { margin-bottom: clamp(2.2rem, 5vw, 3.5rem); }
+
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+.section-kicker::before {
+  content: '';
+  width: 26px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+.section-index { color: var(--fg-faint); }
+
+.section-title {
+  font-size: clamp(1.7rem, 4.5vw, 2.7rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.section-sub {
+  margin-top: 0.9rem;
+  color: var(--fg-muted);
+  max-width: 52ch;
+  font-size: 1.02rem;
+}
+
+/* ── Utilidades de texto ────────────────────────────────────────── */
+.mono { font-family: var(--font-mono); }
+.accent { color: var(--accent); }
+.muted { color: var(--fg-muted); }
+
+/* Chip / tag tecnología */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--fg-muted);
+  padding: 0.28rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  background: var(--bg-elev);
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+}
+.chip:hover {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  transform: translateY(-1px);
+}
+
+/* ── Animación reveal on-scroll ─────────────────────────────────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-reveal].is-visible { opacity: 1; transform: none; }
+[data-reveal-delay='1'] { transition-delay: 0.08s; }
+[data-reveal-delay='2'] { transition-delay: 0.16s; }
+[data-reveal-delay='3'] { transition-delay: 0.24s; }
+[data-reveal-delay='4'] { transition-delay: 0.32s; }
+
+/* ── Barra de progreso de scroll ────────────────────────────────── */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  z-index: 60;
+  pointer-events: none;
+}
+.scroll-progress span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--cyan), var(--accent));
+  box-shadow: 0 0 12px var(--accent-glow);
+}
